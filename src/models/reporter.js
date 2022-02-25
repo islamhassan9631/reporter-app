@@ -47,21 +47,22 @@ const iSchema = new mongoose.Schema({
             message: props => `${props.value} is not a valid phone number!`
         },
         required: true
+         
     },
-    avatar:{
-        type:Buffer
+    avatar: {
+        type: Buffer
     },
-  
     tokens: [
         {
             type: String,
             required: true
         }
-    ]
-})
-
-
-
+    ],
+   
+      
+},
+ {timestamps:true}
+)
 
 iSchema.pre('save', async function () {
 
@@ -92,18 +93,19 @@ iSchema.statics.findByCredentials = async (email, password) => {
 
 iSchema.methods.generateToken = async function () {
     const reporter = this
-    const token = jwt.sign({ _id: reporter._id.toString() },process.env.JWT_ST)
+    const token = jwt.sign({ _id: reporter._id.toString() }, process.env.JWT_ST)
 
     reporter.tokens = reporter.tokens.concat(token)
     await reporter.save()
 
     return token
 }
-iSchema.virtual("News",{
-    ref:"news",
-    localField:"_id",
-    foreignField:"owner"
+iSchema.virtual("News", {
+    ref: "news",
+    localField: "_id",
+    foreignField: "owner"
 })
+
 
 const Reporter = mongoose.model('Reporter', iSchema)
 module.exports = Reporter

@@ -9,10 +9,10 @@ router.post('/reporters', async (req, res) => {
     try {
         const reporter = new Reporter(req.body)
         await reporter.save()
-       const reportert =new Reporter.currentTime() 
-      
+
         const token = await reporter.generateToken()
-        res.status(200).send({ reporter, token,reportert })
+
+        res.status(200).send({ reporter, token,reporter  })
     }
     catch (e) {
         res.status(400).send(e.message)
@@ -23,6 +23,7 @@ router.post('/login', async (req, res) => {
     try {
         const reporter = await Reporter.findByCredentials(req.body.email, req.body.password)
         const token = await reporter.generateToken()
+    
         res.status(200).send({ reporter, token })
     }
     catch (e) {
@@ -121,22 +122,22 @@ router.delete('/logoutall', auth, async (req, res) => {
     }
 
 })
-const uploads =multer({
+const uploads = multer({
     fileFilter(req, file, cb) {
-        if (!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+        if (!file.originalname.match(/\.(jpg|png|jpeg)$/)) {
             cb(new Error("error"))
         }
-cb(null,true)
-     
+        cb(null, true)
+
     }
 })
-router.post('/avatar',auth,uploads.single("avatar"),async(req,res)=>{
-    try{
-        req.reporter.avatar=req.file.buffer
+router.post('/avatar', auth, uploads.single("avatar"), async (req, res) => {
+    try {
+        req.reporter.avatar = req.file.buffer
         await req.reporter.save()
         res.send()
     }
-    catch(e){
+    catch (e) {
         res.send(e)
     }
 })
