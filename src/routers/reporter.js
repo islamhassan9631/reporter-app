@@ -15,7 +15,7 @@ router.post('/reporters', async (req, res) => {
         res.status(200).send({ reporter, token,reporter  })
     }
     catch (e) {
-        res.status(400).send(e.message)
+        res.status(400).send(e)
     }
 })
 
@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
         res.status(200).send({ reporter, token })
     }
     catch (e) {
-        res.status(400).send(e.message)
+        res.status(400).send(e)
     }
 })
 
@@ -43,7 +43,7 @@ router.get('/reporters', auth, async (req, res) => {
         res.send(reporter)
     }
     catch (e) {
-        res.status(500).send(e.message)
+        res.status(500).send(e)
     }
 })
 
@@ -77,7 +77,7 @@ router.delete('/reporters', auth, async (req, res) => {
         res.status(200).send(reporter)
     }
     catch (e) {
-        res.status(500).send(e.message)
+        res.status(500).send(e)
     }
 })
 
@@ -93,7 +93,7 @@ router.delete('/profile', auth, async (req, res) => {
         res.status(200).send(reporter)
     }
     catch (e) {
-        res.status(500).send(e.message)
+        res.status(500).send(e)
     }
 })
 
@@ -104,10 +104,10 @@ router.delete('/logout', auth, async (req, res) => {
             return el !== req.reporter.tokens
         })
         await req.reporter.save()
-        res.send('Logout Successfully')
+        res.send()
     }
     catch (e) {
-        res.status(500).send(e.message)
+        res.status(500).send(e)
     }
 })
 
@@ -118,7 +118,7 @@ router.delete('/logoutall', auth, async (req, res) => {
         res.send()
     }
     catch (e) {
-        res.status(500).send(e.message)
+        res.status(500).send(e)
     }
 
 })

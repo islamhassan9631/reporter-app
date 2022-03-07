@@ -3,7 +3,7 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const iSchema = new mongoose.Schema({
+const reporterSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -44,10 +44,10 @@ const iSchema = new mongoose.Schema({
             validator: function (v) {
                 return /01[0125]\d{4}\d{4}/.test(v);
             },
-            message: props => `${props.value} is not a valid phone number!`
+            // message: props => `${props.value} `
         },
         required: true
-         
+
     },
     avatar: {
         type: Buffer
@@ -58,13 +58,13 @@ const iSchema = new mongoose.Schema({
             required: true
         }
     ],
-   
-      
+
+
 },
- {timestamps:true}
+    { timestamps: { currentTime: () => new Date().getTime() + (2 * 60 * 60 * 1000) } }
 )
 
-iSchema.pre('save', async function () {
+reporterSchema.pre('save', async function () {
 
     const reporter = this
 
@@ -73,7 +73,7 @@ iSchema.pre('save', async function () {
 
 
 
-iSchema.statics.findByCredentials = async (email, password) => {
+reporterSchema.statics.findByCredentials = async (email, password) => {
     const reporter = await Reporter.findOne({ email })
 
     if (!reporter) {
@@ -91,7 +91,7 @@ iSchema.statics.findByCredentials = async (email, password) => {
 
 
 
-iSchema.methods.generateToken = async function () {
+reporterSchema.methods.generateToken = async function () {
     const reporter = this
     const token = jwt.sign({ _id: reporter._id.toString() }, process.env.JWT_ST)
 
@@ -100,13 +100,24 @@ iSchema.methods.generateToken = async function () {
 
     return token
 }
-iSchema.virtual("News", {
+reporterSchema.virtual("News", {
     ref: "news",
     localField: "_id",
     foreignField: "owner"
 })
 
+reporterSchema.methods.toJSON = function () {
 
-const Reporter = mongoose.model('Reporter', iSchema)
+    const reporter = this
+    const reporterObject = reporter.toObject()
+
+    delete reporterObject.password
+    delete reporterObject.tokens
+    return reporterObject
+
+}
+
+
+const Reporter = mongoose.model('Reporter', reporterSchema)
 module.exports = Reporter
 
